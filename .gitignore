@@ -1,0 +1,22 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+bin/
+
+# Dependency directories
+vendor/
+
+# Configuration files (สำคัญมาก: ห้ามเอาขึ้น GitHub)
+.env
+.env.local
+
+# Go specific
+go.work
+Coding-Competition-Game
+
+# IDEs
+.vscode/
+.idea/
