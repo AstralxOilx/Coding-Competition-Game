@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  # --- Database หลัก ---
+  postgres_main:
+    image: postgres:15-alpine
+    container_name: postgres_main
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: competition_main_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_main_data:/var/lib/postgresql/data
+
+  # --- Database สำหรับ Log ---
+  postgres_log:
+    image: postgres:15-alpine
+    container_name: postgres_log
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: competition_log_db
+    ports:
+      - "5433:5432" # แม้ในคอนเทนเนอร์จะรัน 5432 แต่เรา Map ออกมาที่เครื่องเป็น 5433 เพื่อไม่ให้ชนกับตัวแรก
+    volumes:
+      - postgres_log_data:/var/lib/postgresql/data
+
+  # --- Redis Cache ---
+  redis:
+    image: redis:7-alpine
+    container_name: redis_cache
+    ports:
+      - "6379:6379"
+    command: redis-server --save 60 1 --loglevel warning # เซฟลงดิสก์ทุก 60 วินาทีถ้ามีการเปลี่ยนแปลง
+
+volumes:
+  postgres_main_data:
+  postgres_log_data:
