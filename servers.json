@@ -1,0 +1,22 @@
+{
+  "Servers": {
+    "1": {
+      "Name": "Main DB",
+      "Group": "Competition",
+      "Host": "postgres_main",
+      "Port": 5432,
+      "MaintenanceDB": "competition_main_db",
+      "Username": "postgres",
+      "SSLMode": "disable"
+    },
+    "2": {
+      "Name": "Log DB",
+      "Group": "Competition",
+      "Host": "postgres_log",
+      "Port": 5432,
+      "MaintenanceDB": "competition_log_db",
+      "Username": "postgres",
+      "SSLMode": "disable"
+    }
+  }
+}

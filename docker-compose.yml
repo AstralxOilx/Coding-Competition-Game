@@ -1,40 +1,47 @@
-version: '3.8'
-
 services:
-  # --- Database หลัก ---
   postgres_main:
     image: postgres:15-alpine
     container_name: postgres_main
     environment:
-      POSTGRES_USER: root
+      POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 1234
       POSTGRES_DB: competition_main_db
+      POSTGRES_HOST_AUTH_METHOD: trust # <--- ยอมรับการเชื่อมต่อแบบ local ให้ง่ายขึ้น
     ports:
-      - "5432:5432"
+      - "5439:5432"
     volumes:
       - postgres_main_data:/var/lib/postgresql/data
 
-  # --- Database สำหรับ Log ---
   postgres_log:
     image: postgres:15-alpine
     container_name: postgres_log
     environment:
-      POSTGRES_USER: root
+      POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 1234
       POSTGRES_DB: competition_log_db
+      POSTGRES_HOST_AUTH_METHOD: trust # <--- เพิ่มเหมือนกัน
     ports:
-      - "5433:5432" # แม้ในคอนเทนเนอร์จะรัน 5432 แต่เรา Map ออกมาที่เครื่องเป็น 5433 เพื่อไม่ให้ชนกับตัวแรก
+      - "5438:5432" # ภายนอกเข้า 5433 ภายในคุย 5432
     volumes:
       - postgres_log_data:/var/lib/postgresql/data
 
-  # --- Redis Cache ---
-  redis:
-    image: redis:7-alpine
-    container_name: redis_cache
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin_container
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+      - ./servers.json:/pgadmin4/servers.json # ไฟล์ต้องอยู่ข้างนอกคู่กับ docker-compose.yml
     ports:
-      - "6379:6379"
-    command: redis-server --save 60 1 --loglevel warning # เซฟลงดิสก์ทุก 60 วินาทีถ้ามีการเปลี่ยนแปลง
+      - "5050:80"
+    depends_on:
+      - postgres_main
+      - postgres_log
 
 volumes:
   postgres_main_data:
   postgres_log_data:
+  pgadmin_data:

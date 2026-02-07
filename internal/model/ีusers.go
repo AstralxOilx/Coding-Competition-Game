@@ -7,13 +7,40 @@ import (
 )
 
 type Users struct {
-	ID          string     `gorm:"primaryKey;size:14" json:"id"`
-	DisplayName string     `gorm:"not null" json:"display_name"`
-	AvatarURL   string     `json:"avatar_url"`
-	UserName    string     `gorm:"not null" json:"user_name"`
-	Password    string     `gorm:"not null" json:"password"`
-	Status      string     `gorm:"not null" json:"status"`
-	IsActive    bool       `gorm:"default:true" json:"is_active"`
-	LastLogin   *time.Time `json:"last_login"` // เก็บสถิติการเข้าใช้งานล่าสุด
+	ID          string `gorm:"primaryKey;size:14" json:"id"`
+	DisplayName string `gorm:"type:varchar(14);not null" json:"display_name"`
+	UserName    string `gorm:"type:varchar(20);not null;unique" json:"user_name"`
+	Password    string `gorm:"not null" json:"-"`
+	Email       string `gorm:"not null;unique" json:"email"`
+
+	PlayerLevel int `gorm:"default:1" json:"player_level"`
+	PlayerExp   int `gorm:"default:0" json:"player_exp"`
+
+	Ranks []UserRanks `gorm:"foreignKey:UserID" json:"ranks"`
+
+	// เก็บเป็นตัวเลข (0=GM, 1=DEV, 2=USER, 3=GUEST)
+	UserRole int `gorm:"default:2" json:"user_role"`
+	// เก็บเป็นตัวเลข (0=ONLINE, 1=OFFLINE, 2=UNAVAILABLE)
+	Status int `gorm:"default:1" json:"status"`
+
+	IsActive  bool       `gorm:"default:true" json:"is_active"`
+	AvatarURL string     `json:"avatar_url"`
+	LastLogin *time.Time `json:"last_login"`
 	gorm.Model
+}
+
+type UserRanks struct {
+	gorm.Model
+	UserID   string `gorm:"size:14;index" json:"user_id"`
+	ModeName string `gorm:"type:varchar(20);index" json:"mode_name"`
+
+	// --- ระบบความเก่ง (เปลี่ยนเป็น int ทั้งหมด) ---
+	Rank      int `gorm:"default:0" json:"rank"`      // เก็บ index 0-13
+	RankTier  int `gorm:"default:3" json:"rank_tier"` // เก็บเลข 3, 2, 1
+	RankPoint int `gorm:"default:0" json:"rank_point"`
+
+	TotalGames int `gorm:"default:0" json:"total_games"`
+	Win        int `gorm:"default:0" json:"win"`
+	Loss       int `gorm:"default:0" json:"loss"`
+	Draw       int `gorm:"default:0" json:"draw"`
 }

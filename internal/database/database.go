@@ -69,11 +69,21 @@ func InitDatabase() {
 // Helper function to handle connection logic for multiple DBs
 func connectDB(host, user, pass, name, port, ssl, label string, gormLogger logger.Interface) *gorm.DB {
 	fmt.Printf("%s[DB]%s Connecting to %s... ", ColorCyan, ColorReset, label)
+	// --- เพิ่มบรรทัดนี้เพื่อเช็คค่าที่แอปอ่านได้จริง ---
+	fmt.Printf("\n[DEBUG] Connecting to %s -> Host: %s, Port: %s, DB: %s, User: %s\n", label, host, port, name, user)
+	// -------------------------------------------
+	// ป้องกันค่าว่าง
+	if ssl == "" {
+		ssl = "disable"
+	}
 
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=%s TimeZone=Asia/Bangkok",
-		host, user, pass, name, port, ssl,
+	// เปลี่ยนมาใช้รูปแบบ URL (Stronger & More Reliable for SASL/SCRAM)
+	// รูปแบบ: postgres://user:password@host:port/dbname?sslmode=disable
+	dsn := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=%s&TimeZone=Asia/Bangkok",
+		user, pass, host, port, name, ssl,
 	)
 
+	// ใช้ postgres.Open(dsn) เหมือนเดิม แต่ dsn เป็น URL
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
 		Logger: gormLogger,
 	})
@@ -81,10 +91,12 @@ func connectDB(host, user, pass, name, port, ssl, label string, gormLogger logge
 	if err != nil {
 		fmt.Printf("%s[FAILED]%s\n", ColorRed, ColorReset)
 		fmt.Printf("%sError:%s %v\n", ColorRed, ColorReset, err)
+		// แสดง DSN ออกมาเช็ค (เฉพาะตอน Debug) เพื่อดูว่าค่าที่อ่านจาก .env ถูกไหม
+		// fmt.Printf("DEBUG DSN: host=%s port=%s user=%s\n", host, port, user)
 		panic(fmt.Sprintf("Failed to connect to %s", label))
 	}
 
-	// Connection Pool Settings
+	// Connection Pool (เหมือนเดิม)
 	sqlDB, _ := db.DB()
 	sqlDB.SetMaxIdleConns(10)
 	sqlDB.SetMaxOpenConns(100)
