@@ -7,8 +7,10 @@ import (
 	"strings"
 	"time"
 
+	"github.com/AstralxOilx/Coding-Competition-Game/internal/config"
 	"github.com/AstralxOilx/Coding-Competition-Game/internal/database"
 	"github.com/AstralxOilx/Coding-Competition-Game/internal/model"
+	"github.com/AstralxOilx/Coding-Competition-Game/internal/router"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 
@@ -66,6 +68,8 @@ func main() {
 		log.Fatalf("Error loading .env file: %v", err) // ถ้าโหลดไม่ได้ให้หยุดทันที จะได้รู้ว่าไฟล์หาย
 	}
 
+	config.LoadConfig()
+
 	fmt.Println(strings.Repeat("=", 60))
 	fmt.Printf("%s[CORE] INITIALIZING SYSTEM...%s\n", ColorPurple, ColorReset)
 	fmt.Println(strings.Repeat("=", 60))
@@ -116,15 +120,10 @@ func main() {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
-	r := gin.Default() // หรือ gin.New()
-
+	// r := gin.Default()
+	r := router.InitRouter()
 	// 2. เรียกใช้ Security Setup
 	SetupSecurity(r)
-
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{"message": "secure pong"})
-	})
-
 	r.Run(":8080")
 
 }

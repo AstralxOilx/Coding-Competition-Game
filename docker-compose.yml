@@ -41,7 +41,34 @@ services:
       - postgres_main
       - postgres_log
 
+  
+  redis_cache:
+    image: redis:7-alpine
+    container_name: redis_cache
+    restart: always
+    ports:
+      - "6379:6379"
+    command: redis-server --loglevel warning # ลด Log ที่ไม่จำเป็น
+    # ถ้าอยากใส่ Password ให้แก้บรรทัด command เป็นด้านล่างนี้ (เอาคอมเมนต์ออก)
+    # command: redis-server --requirepass your_password --loglevel warning
+    volumes:
+      - redis_data:/data 
+    # command: redis-server --appendonly yes
+
+       
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: redis-commander
+    restart: always
+    environment:
+      - REDIS_HOSTS=local:redis_cache:6379 # เชื่อมต่อกับ service redis_cache อัตโนมัติ
+    ports:
+      - "8081:8081"
+    depends_on:
+      - redis_cache
+
 volumes:
   postgres_main_data:
   postgres_log_data:
   pgadmin_data:
+  redis_data: 

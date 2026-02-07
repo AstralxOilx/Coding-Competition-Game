@@ -14,12 +14,15 @@ var (
 )
 
 func InitRedis() {
+	// addr := fmt.Sprintf("%s:%s", os.Getenv("REDIS_HOST"), os.Getenv("REDIS_PORT"))
+
 	addr := fmt.Sprintf("%s:%s", os.Getenv("REDIS_HOST"), os.Getenv("REDIS_PORT"))
+	password := os.Getenv("REDIS_PASSWORD")
 
 	RDB = redis.NewClient(&redis.Options{
 		Addr:     addr,
-		Password: os.Getenv("REDIS_PASSWORD"), // ถ้าไม่มีจะเป็นค่าว่าง ""
-		DB:       0,                           // Default DB
+		Password: os.Getenv(password), // ถ้าไม่มีจะเป็นค่าว่าง ""
+		DB:       0,                   // Default DB
 	})
 
 	fmt.Printf("\033[34m[REDIS]\033[0m Connecting to Redis... ")
@@ -30,4 +33,5 @@ func InitRedis() {
 	} else {
 		fmt.Printf("\033[32m[SUCCESS]\033[0m\n")
 	}
+
 }
