@@ -18,7 +18,7 @@ type Users struct {
 
 	Ranks []UserRanks `gorm:"foreignKey:UserID" json:"ranks"`
 
-	// เก็บเป็นตัวเลข (0=GM, 1=DEV, 2=USER, 3=GUEST)
+	// เก็บเป็นตัวเลข (0=DEV, 1=GM, 2=USER, 3=GUEST)
 	UserRole int `gorm:"default:2" json:"user_role"`
 	// เก็บเป็นตัวเลข (0=ONLINE, 1=OFFLINE, 2=UNAVAILABLE)
 	Status int `gorm:"default:1" json:"status"`
@@ -43,4 +43,19 @@ type UserRanks struct {
 	Win        int `gorm:"default:0" json:"win"`
 	Loss       int `gorm:"default:0" json:"loss"`
 	Draw       int `gorm:"default:0" json:"draw"`
+}
+
+type Friendships struct {
+	gorm.Model
+	// ผู้ส่งคำขอ
+	UserID string `gorm:"size:14;index;not null" json:"user_id"`
+	// ผู้รับคำขอ
+	FriendID string `gorm:"size:14;index;not null" json:"friend_id"`
+
+	// สถานะความสัมพันธ์: 0=PENDING, 1=ACCEPTED, 2=BLOCKED
+	Status int `gorm:"default:0" json:"status"`
+
+	// ทำ BelongsTo เพื่อให้ดึงข้อมูล User ออกมาดูได้ง่าย
+	User   Users `gorm:"foreignKey:UserID" json:"-"`
+	Friend Users `gorm:"foreignKey:FriendID" json:"-"`
 }

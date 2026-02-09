@@ -9,7 +9,6 @@ import (
 
 	"github.com/AstralxOilx/Coding-Competition-Game/internal/config"
 	"github.com/AstralxOilx/Coding-Competition-Game/internal/database"
-	"github.com/AstralxOilx/Coding-Competition-Game/internal/model"
 	"github.com/AstralxOilx/Coding-Competition-Game/internal/router"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -86,29 +85,30 @@ func main() {
 	// ---------------------------------------------------------
 	fmt.Printf("%s[ORM]%s Syncing Main Schema... ", ColorCyan, ColorReset)
 	// รวมทุก Model ของ Main DB ไว้ในคำสั่งเดียว
-	errMain := database.DB.AutoMigrate(
-		&model.Users{},
-		&model.UserRanks{},
-	)
-	if errMain != nil {
-		fmt.Printf("%s[FAILED]%s\n", ColorRed, ColorReset)
-		log.Fatalf("Main Migration error: %v", errMain)
-	}
+	// errMain := database.DB.AutoMigrate(
+	// 	&model.Users{},
+	// 	&model.UserRanks{},
+	// 	&model.Friendships{},
+	// )
+	// if errMain != nil {
+	// 	fmt.Printf("%s[FAILED]%s\n", ColorRed, ColorReset)
+	// 	log.Fatalf("Main Migration error: %v", errMain)
+	// }
 	fmt.Printf("%s[DONE]%s\n", ColorGreen, ColorReset)
 
 	// ---------------------------------------------------------
 	// 3.2 Migrate Log Database (ตาราง Log)
 	// ---------------------------------------------------------
-	fmt.Printf("%s[ORM]%s Syncing Log Schema...  ", ColorCyan, ColorReset)
-	// รวมทุก Model ของ Log DB ไว้ในคำสั่งเดียว
-	errLog := database.LogDB.AutoMigrate(
-		&model.LoginLog{},
-		&model.MatchLogs{},
-	)
-	if errLog != nil {
-		fmt.Printf("%s[FAILED]%s\n", ColorRed, ColorReset)
-		log.Fatalf("Log Migration error: %v", errLog)
-	}
+	// fmt.Printf("%s[ORM]%s Syncing Log Schema...  ", ColorCyan, ColorReset)
+	// // รวมทุก Model ของ Log DB ไว้ในคำสั่งเดียว
+	// errLog := database.LogDB.AutoMigrate(
+	// 	&model.LoginLog{},
+	// 	&model.MatchLogs{},
+	// )
+	// if errLog != nil {
+	// 	fmt.Printf("%s[FAILED]%s\n", ColorRed, ColorReset)
+	// 	log.Fatalf("Log Migration error: %v", errLog)
+	// }
 	fmt.Printf("%s[DONE]%s\n", ColorGreen, ColorReset)
 
 	fmt.Println(strings.Repeat("-", 60))

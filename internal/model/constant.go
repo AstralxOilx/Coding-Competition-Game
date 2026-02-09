@@ -2,8 +2,8 @@ package model
 
 var (
 	UserRole = []string{
-		"GM",
 		"DEV",
+		"GM",
 		"USER",
 		"GUEST",
 	}
@@ -54,6 +54,12 @@ var (
 		2, // ระดับกลาง (Expert)
 		1, // ระดับสูงสุด (Master/Elite) ของ Rank นั้นๆ
 	}
+
+	FriendStatus = []string{
+		"PENDING",
+		"ACCEPTED",
+		"BLOCKED",
+	}
 )
 
 const (
@@ -68,4 +74,18 @@ const (
 
 	// ModeCyberSiege: โหมดพิเศษแบบทีม หรือการแข่งเก็บแต้มสะสมรายสัปดาห์
 	ModeCyberSiege = "CyberSiege"
+
+	FriendStatusPending  = 0
+	FriendStatusAccepted = 1
+	FriendStatusBlocked  = 2
+
+	// User Role (บทบาทผู้ใช้)
+	RoleDev   = 0
+	RoleGM    = 1
+	RoleUser  = 2
+	RoleGuest = 3
+
+	StatusOnline      = 0
+	StatusOffline     = 1
+	StatusUnavailable = 2
 )

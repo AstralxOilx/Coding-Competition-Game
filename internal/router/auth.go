@@ -9,13 +9,28 @@ import (
 func InitAuthRoutes(rg *gin.RouterGroup, h *handler.AuthHandler) {
 	auth := rg.Group("/auth")
 	{
+		// 🔓 Public Routes (ไม่ต้องใส่ Token ก็เรียกได้)
 		auth.POST("/signup", h.Signup)
 		auth.POST("/signin", h.Signin)
+
+		// 🔄 Refresh Token (ปกติส่ง Refresh Token มาใน Body จึงไม่ต้องใช้ AuthMiddleware)
+		auth.POST("/refresh", h.Refresh)
+
+		// 🔒 Protected Routes (ต้องมี Access Token ที่ยังไม่หมดอายุ)
 		protected := auth.Group("/")
 		protected.Use(middleware.AuthMiddleware())
 		{
-			protected.POST("/refresh", h.Refresh)
+			// ตัวอย่าง: logout หรือ profile
+			// protected.POST("/logout", h.Logout)
 		}
-
 	}
 }
+
+// func InitAuthRoutes(rg *gin.RouterGroup, h *handler.AuthHandler) {
+// 	auth := rg.Group("/auth")
+// 	{
+// 		auth.POST("/signup", h.Signup)
+// 		auth.POST("/signin", h.Signin)
+// 		auth.POST("/refresh", h.Refresh)
+// 	}
+// }

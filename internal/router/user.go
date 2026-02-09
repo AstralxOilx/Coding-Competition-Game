@@ -12,7 +12,8 @@ func InitUserRoutes(rg *gin.RouterGroup, h *handler.UserHandler) {
 	// ใช้ Middleware กับทั้งกลุ่มนี้เลย
 	users.Use(middleware.AuthMiddleware())
 	{
-		users.GET("/", middleware.RoleMiddleware(1), h.FindAllUser)
-
+		users.GET("/", middleware.RoleMiddleware(0), h.FindAllUser)
+		users.GET("/profile", h.GetProfile)
+		users.PATCH("/profile", h.UpdateUserInfo)
 	}
 }
