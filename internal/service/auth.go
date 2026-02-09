@@ -55,8 +55,6 @@ func (s *authService) Signin(req dto.SigninRequest) (*dto.SigninResponse, error)
 	// ✅ แก้จาก nil เป็น ctx
 	oldToken, err := redis.GetUserSession(ctx, user.ID)
 	if err == nil && oldToken != "" {
-		util.WSManager.NotifyOldDevice(user.ID)
-		// ✅ ใช้ ctx ในการลบ session
 		_ = database.RDB.Del(ctx, "session:"+user.ID).Err()
 		return nil, errors.New("conflict")
 	}

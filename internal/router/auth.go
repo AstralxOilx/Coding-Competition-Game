@@ -25,12 +25,3 @@ func InitAuthRoutes(rg *gin.RouterGroup, h *handler.AuthHandler) {
 		}
 	}
 }
-
-// func InitAuthRoutes(rg *gin.RouterGroup, h *handler.AuthHandler) {
-// 	auth := rg.Group("/auth")
-// 	{
-// 		auth.POST("/signup", h.Signup)
-// 		auth.POST("/signin", h.Signin)
-// 		auth.POST("/refresh", h.Refresh)
-// 	}
-// }

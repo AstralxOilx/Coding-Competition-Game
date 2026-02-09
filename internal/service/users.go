@@ -4,41 +4,33 @@ import (
 	"github.com/AstralxOilx/Coding-Competition-Game/internal/dto"
 	"github.com/AstralxOilx/Coding-Competition-Game/internal/model"
 	"github.com/AstralxOilx/Coding-Competition-Game/internal/repository"
-	"github.com/AstralxOilx/Coding-Competition-Game/internal/service/socket"
 )
 
 type UserService interface {
-	GetAllUsers() ([]model.Users, error)
-	GetProfile(userID string) (*dto.ProfileResponse, error)
+	AllUsers() ([]model.Users, error)
+	Profile(userID string) (*dto.ProfileResponse, error)
 	// ✅ 1. เพิ่มเข้า Interface เพื่อให้ Handler เรียกใช้ได้
 	UpdateUserInfo(userID string, displayName string, avatarURL string) (*dto.ProfileResponse, error)
-	CheckStatus(userID string) string
 }
 
 type userService struct {
-	repo      repository.UserRepo
-	wsService socket.WSService
+	repo repository.UserRepo
 }
 
-func NewUserService(r repository.UserRepo, ws socket.WSService) UserService {
-	return &userService{repo: r, wsService: ws}
+func NewUserService(r repository.UserRepo) UserService {
+	return &userService{repo: r}
 }
 
 // ... (GetAllUsers และ GetProfile เหมือนเดิม) ...
 
-func (s *userService) GetAllUsers() ([]model.Users, error) {
+func (s *userService) AllUsers() ([]model.Users, error) {
 	return s.repo.FindAllUser()
 }
 
-func (s *userService) GetProfile(userID string) (*dto.ProfileResponse, error) {
+func (s *userService) Profile(userID string) (*dto.ProfileResponse, error) {
 	user, err := s.repo.FindById(userID)
 	if err != nil {
 		return nil, err
-	}
-
-	status := 1 // OFFLINE
-	if s.wsService.IsUserOnline(user.ID) {
-		status = 0 // ONLINE
 	}
 
 	var rankResponses []dto.UserRankResponse
@@ -63,17 +55,9 @@ func (s *userService) GetProfile(userID string) (*dto.ProfileResponse, error) {
 		AvatarURL:   user.AvatarURL,
 		PlayerLevel: user.PlayerLevel,
 		PlayerExp:   user.PlayerExp,
-		Status:      status,
 		LastLogin:   user.LastLogin,
 		Ranks:       rankResponses,
 	}, nil
-}
-
-func (s *userService) CheckStatus(userID string) string {
-	if s.wsService.IsUserOnline(userID) {
-		return "Online"
-	}
-	return "Offline"
 }
 
 func (s *userService) UpdateUserInfo(userID string, displayName string, avatarURL string) (*dto.ProfileResponse, error) {
@@ -90,5 +74,5 @@ func (s *userService) UpdateUserInfo(userID string, displayName string, avatarUR
 	}
 
 	// 3. พออัปเดตเสร็จค่อยเรียก GetProfile เพื่อเอาข้อมูลมาแปลงเป็น DTO ส่งกลับ
-	return s.GetProfile(userID)
+	return s.Profile(userID)
 }

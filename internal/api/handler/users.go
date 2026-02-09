@@ -17,7 +17,7 @@ func NewUserHandler(s service.UserService) *UserHandler {
 
 func (h *UserHandler) FindAllUser(c *gin.Context) {
 	// 1. เรียกใช้งาน Service แทน Repo
-	users, err := h.userService.GetAllUsers()
+	users, err := h.userService.AllUsers()
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve users"})
@@ -34,7 +34,7 @@ func (h *UserHandler) FindAllUser(c *gin.Context) {
 func (h *UserHandler) GetProfile(c *gin.Context) {
 	userID, _ := c.Get("user_id")
 
-	profile, err := h.userService.GetProfile(userID.(string))
+	profile, err := h.userService.Profile(userID.(string))
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 		return
